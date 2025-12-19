@@ -24,6 +24,7 @@
             uv
             jdk21
             jdk11
+            maven
             time
             cmake
             capnproto
