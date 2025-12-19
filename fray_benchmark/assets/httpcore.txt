@@ -1,0 +1,11 @@
+org.apache.http.nio.protocol.TestAsyncNHttpHandlers#testDelayedHttpException
+org.apache.http.nio.protocol.TestAsyncNHttpHandlers#testDelayedHttpGets
+org.apache.http.nio.protocol.TestAsyncNHttpHandlers#testHttpPostsChunked
+org.apache.http.nio.protocol.TestAsyncNHttpHandlers#testNoRequestHandler
+org.apache.http.nio.protocol.TestAsyncNHttpHandlers#testNoServiceHandler
+org.apache.http.nio.protocol.TestBufferingNHttpHandlers#testHttpPostsChunked
+org.apache.http.nio.protocol.TestBufferingNHttpHandlers#testHttpPostsHTTP10
+org.apache.http.nio.protocol.TestThrottlingNHttpHandlers#testSimpleHttpGets
+org.apache.http.nio.protocol.TestThrottlingNHttpHandlers#testSimpleHttpPostsChunked
+org.apache.http.pool.TestConnPool#testLeaseTimeout
+org.apache.http.pool.TestConnPool#testStatefulConnectionRedistributionOnPerRouteMaxLimit
