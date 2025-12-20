@@ -54,23 +54,7 @@ public class JUnitRunner {
             Request request = Request.method(
                     Class.forName(classAndMethod[0], true, Thread.currentThread().getContextClassLoader()),
                     classAndMethod[1]
-            ).filterWith(new Filter() {
-                private boolean found = false;
-
-                @Override
-                public boolean shouldRun(Description description) {
-                    if (found) return false;
-                    if (description.getMethodName().equals(classAndMethod[1])) {
-                        found = true;
-                    }
-                    return found;
-                }
-
-                @Override
-                public String describe() {
-                    return classAndMethod[1];
-                }
-            });
+            );
 
             Result result = new JUnitCore().run(request);
             if (!result.wasSuccessful()) {
