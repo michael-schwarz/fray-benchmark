@@ -264,7 +264,7 @@ class BenchmarkBase(object):
 
             command.append("--")
             command.extend(config)
-            command.extend(["--iter", "-1", "--sleep-as-yield"])
+            command.extend(["--iter", "-1", "--sleep-as-yield", "--timeout", str(timeout)])
             command.extend(["-o", f"{log_path}/report"])
 
             if perf_mode:
