@@ -15,7 +15,7 @@
   ignore = dirty
 [submodule "tools/fray"]
 	path = tools/fray
-	url = https://github.com/cmu-pasta/fray
+	url = https://github.com/michael-schwarz/fray
 [submodule "tools/jpf-core"]
 	path = tools/jpf-core
 	url = https://github.com/aoli-al/jpf-core
