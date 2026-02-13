@@ -63,6 +63,12 @@ class HttpcoreBenchmark(UnitTestBenchmark):
             "test-compile",
         ], cwd=self.bench_dir, env=env)
 
+        # Generate source jars
+        subprocess.call([
+            "mvn",
+            "source:jar",
+        ], cwd=self.bench_dir, env=env)
+
         # Copy dependencies for httpcore module
         subprocess.call([
             "mvn",

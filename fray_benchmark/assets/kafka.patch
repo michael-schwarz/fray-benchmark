@@ -2,10 +2,14 @@ diff --git a/build.gradle b/build.gradle
 index 3c202567b0..ee80f12668 100644
 --- a/build.gradle
 +++ b/build.gradle
-@@ -1784,6 +1784,18 @@ project(':raft') {
+@@ -1784,6 +1784,23 @@ project(':raft') {
    javadoc {
      enabled = false
    }
++
++  java {
++    withSourcesJar()
++  }
 +
 +  tasks.create(name: "copyDependencies", type: Copy) {
 +    from (configurations.testRuntimeClasspath) {
@@ -21,10 +25,14 @@ index 3c202567b0..ee80f12668 100644
  }
  
  project(':server-common') {
-@@ -2390,6 +2402,18 @@ project(':streams') {
+@@ -2390,6 +2407,23 @@ project(':streams') {
      dependsOn testJar
    }
  
++  java {
++    withSourcesJar()
++  }
++
 +  tasks.create(name: "copyDependencies", type: Copy) {
 +    from (configurations.testRuntimeClasspath) {
 +      include('*.jar')

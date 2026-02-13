@@ -31,7 +31,8 @@ class GuavaBenchmark(UnitTestBenchmark):
         subprocess.call([
             "../mvnw",
             "-DskipTests",
-            "package"
+            "package",
+            "source:jar"
         ], cwd=self.guava_test_dir)
         subprocess.call([
             "../mvnw",
