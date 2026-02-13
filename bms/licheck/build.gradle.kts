@@ -21,4 +21,7 @@ tasks.register<Copy>("copyDependencies") {
   into("${layout.buildDirectory.get().asFile}/dependency")
 }
 
+java {
+  withSourcesJar()
+}
 
