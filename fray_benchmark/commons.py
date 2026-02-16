@@ -6,6 +6,7 @@ SCHEDULERS = {
     "pos": ['--scheduler=pos'],
     "surw": ['--scheduler=surw'],
     "random": ['--scheduler=random'],
+    "llm-concurr-fuzz" : ['--scheduler=llm-concurr-fuzz', '--llmdir=/home/michael/Documents/software/fray2/fray/llm-stuff/']
 }
 
 FRAY_VERSION = "0.5.2-SNAPSHOT"
