@@ -26,10 +26,12 @@ done
 
 echo "Running benchmarks with $CPU_COUNT CPU cores..."
 
-python3 -m fray_benchmark run java sctbench --name benchmark --iterations 1 --perf-mode --cpu $CPU_COUNT
-python3 -m fray_benchmark run rr sctbench --name benchmark --iterations 1 --perf-mode --cpu $CPU_COUNT
-python3 -m fray_benchmark run rr jacontebe --name benchmark --iterations 1 --perf-mode --cpu $CPU_COUNT
+# python3 -m fray_benchmark run java sctbench --name benchmark --iterations 1 --perf-mode --cpu $CPU_COUNT
+# python3 -m fray_benchmark run rr sctbench --name benchmark --iterations 1 --perf-mode --cpu $CPU_COUNT
+# python3 -m fray_benchmark run rr jacontebe --name benchmark --iterations 1 --perf-mode --cpu $CPU_COUNT
 python3 -m fray_benchmark run fray sctbench --name benchmark --scheduler random --iterations 1 --perf-mode --cpu $CPU_COUNT
 python3 -m fray_benchmark run fray jacontebe --name benchmark --scheduler random --iterations 1 --perf-mode --cpu $CPU_COUNT
-python3 -m fray_benchmark run jpf sctbench --name benchmark --iterations 1 --perf-mode --cpu $CPU_COUNT
-python3 -m fray_benchmark run jpf jacontebe --name benchmark --iterations 1 --perf-mode --cpu $CPU_COUNT
+python3 -m fray_benchmark run fray sctbench --name benchmark --scheduler llm-concurr-fuzz --iterations 1 --perf-mode --cpu $CPU_COUNT
+python3 -m fray_benchmark run fray jacontebe --name benchmark --scheduler llm-concurr-fuzz --iterations 1 --perf-mode --cpu $CPU_COUNT
+# python3 -m fray_benchmark run jpf sctbench --name benchmark --iterations 1 --perf-mode --cpu $CPU_COUNT
+# python3 -m fray_benchmark run jpf jacontebe --name benchmark --iterations 1 --perf-mode --cpu $CPU_COUNT
