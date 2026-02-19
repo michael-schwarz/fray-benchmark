@@ -422,3 +422,26 @@ class BenchmarkSuite:
         ax.legend(title="", bbox_to_anchor=(0., 1.02, 1., .102), loc='lower left',
                       ncols=4, mode="expand", borderaxespad=0.)
         return ax
+
+    def generate_bug_found_iterations_fig(self) -> matplotlib.axes.Axes:
+        df = self.to_aggregated_dataframe()
+        df = df[df["error"] == "Error"]
+
+        # Find bugs found by all techniques
+        bugs_by_technique = df.groupby('id')['Technique'].nunique()
+        all_techniques_count = df['Technique'].nunique()
+        bugs_found_by_all = bugs_by_technique[bugs_by_technique == all_techniques_count].index
+
+        # Filter to only bugs found by all techniques
+        df_filtered = df[df['id'].isin(bugs_found_by_all)]
+
+        # Sort by bug_iter for each id and technique
+        df_filtered = df_filtered.groupby(['id', 'Technique'])['bug_iter'].mean().reset_index()
+
+        ax = sns.barplot(data=df_filtered, x='id', y='bug_iter', hue='Technique')
+        ax.set_xlabel('Bug')
+        ax.set_ylabel('Iterations to Find Bug')
+        ax.set_yscale("log")
+        ax.set_title('Iterations to Find Bug (All Techniques Found)')
+        plt.xticks(rotation=45, ha='right')
+        return ax
