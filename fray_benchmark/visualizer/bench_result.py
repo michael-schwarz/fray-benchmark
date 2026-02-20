@@ -445,3 +445,45 @@ class BenchmarkSuite:
         ax.set_title('Iterations to Find Bug (All Techniques Found)')
         plt.xticks(rotation=45, ha='right')
         return ax
+
+    def generate_bug_over_iterations_fig(self, measurement: str) -> matplotlib.axes.Axes:
+        df = self.to_aggregated_dataframe()
+        total_bugs = df["id"].nunique()
+        df = df[df["error"] == "Error"]
+        df_grouped = df
+        df_grouped['sum'] = df_grouped.groupby(['Technique', 'trial'])[
+            'bug_iter'].rank(method='max')
+        df_grouped['sum'] = df_grouped['sum'].astype(float)
+        df_grouped = df_grouped.groupby(
+            ['bug_iter', 'trial', 'Technique'], as_index=False)['sum'].max()
+        unique_combinations = df_grouped[['Technique', 'trial']].drop_duplicates()
+        new_rows = pd.DataFrame(
+            {'bug_iter': 0, 'trial': unique_combinations['trial'], 'Technique': unique_combinations['Technique'], 'sum': 0})
+        df_grouped = pd.concat([new_rows, df_grouped], ignore_index=True)
+        min_iter = df_grouped['bug_iter'].min()
+        max_iter = df_grouped['bug_iter'].max()
+
+        def interpolate_sum(group):
+            iter_index = np.arange(min_iter, max_iter + 1, 1)
+            group = group.set_index('bug_iter').reindex(iter_index)
+            group['sum'] = group['sum'].ffill()
+            group['Technique'] = group['Technique'].ffill()
+            group['trial'] = group['trial'].ffill()
+            group = group.reset_index().rename(columns={'index': 'bug_iter'})
+            return group
+
+        df_grouped = df_grouped.groupby(['trial', 'Technique']).apply(interpolate_sum).reset_index(drop=True)
+        ax = sns.lineplot(data=df_grouped, x="bug_iter", y="sum", hue="Technique",
+                          linewidth=2, errorbar='sd', estimator='mean', err_style='band', style="Technique")
+        ax.plot([0, df_grouped['bug_iter'].max() + 1], [total_bugs, total_bugs], "r-.", label="Total Bugs")
+        ax.set_xscale("log")
+        ticks = [1, 10, 100, 1000, 10000]
+        tick_labels = ["1", "10", "100", "1000", "10000"]
+        ax.set_xticks(ticks)
+        ax.set_xticklabels(tick_labels)
+
+        ax.set_xlabel('Iterations')
+        ax.set_ylabel('Cumulative # of Bugs')
+        ax.legend(title="", bbox_to_anchor=(0., 1.02, 1., .102), loc='lower left',
+                      ncols=4, mode="expand", borderaxespad=0.)
+        return ax
