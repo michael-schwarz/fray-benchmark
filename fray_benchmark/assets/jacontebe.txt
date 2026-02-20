@@ -1,7 +1,6 @@
 dbcp1
 dbcp2
 dbcp3
-derby1
 derby2
 derby3
 derby4
@@ -18,7 +17,6 @@ log4j3
 log4j4
 log4j5
 lucene1
-lucene2
 pool1
 pool2
 pool3
