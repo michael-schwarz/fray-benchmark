@@ -8,10 +8,16 @@ derby5
 groovy1
 groovy2
 groovy3
+groovy4
 groovy5
+groovy6
 log4j1
+log4j2
 log4j3
+log4j4
+log4j5
 lucene1
+pool1
 pool2
 pool3
 pool4
