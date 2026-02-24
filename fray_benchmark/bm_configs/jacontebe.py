@@ -32,6 +32,7 @@ class JaConTeBe(BenchmarkBase):
                         args.append("-mo")
                     if "Groovy5198" in class_to_run:
                         args.extend(["-tn", "2", "-l", "1"])
+                    args.append("-J--add-opens=java.base/java.lang=ALL-UNNAMED")
                     yield RunConfig(
                         Executor(
                             class_to_run,
