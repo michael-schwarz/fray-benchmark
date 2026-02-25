@@ -54,8 +54,10 @@
 
 - Enter the project directory: `cd fray-benchmark`.
   - In the pre-configured container image, you are already in the project directory (`/fray-benchmark`).
-- Next, you need to enter the devshell: `nix develop`. 
+- Next, you need to enter the devshell: `nix develop`.
 - If you are **not** using the pre-configured container image, run the following command to build all projects: `./scripts/build.sh`.
+
+- `cd helpers/junit-runner` and run `./gradlew build` or some junit runner thing is not there
 
 ## Kick the Tire (Reproduce Mini RQ 1)
 
@@ -91,7 +93,7 @@
 
 ## Real-world Bugs and Corresponding Run ID
 
-- Kafka 
+- Kafka
 
   - Run 11: [#17112 StreamThread shutdown calls completeShutdown only in CREATED state](https://issues.apache.org/jira/browse/KAFKA-17112)
   - Run 10: [#17113 Flaky Test in GlobalStreamThreadTest#shouldThrowStreamsExceptionOnStartupIfExceptionOccurred](https://issues.apache.org/jira/browse/KAFKA-17113)
@@ -112,16 +114,16 @@
   - Run 4: [#13552 Test TestIndexWriterWithThreads#testIOExceptionDuringWriteSegmentWithThreadsOnlyOnce Failed](https://github.com/apache/lucene/issues/13552)
   - Run 0, 3: [#13571 DocumentsWriterDeleteQueue.getNextSequenceNumber assertion failure seqNo=9 vs maxSeqNo=8](https://github.com/apache/lucene/issues/13571)
   - Run 2: [#13593 ConcurrentMergeScheduler may spawn more merge threads than specified](https://github.com/apache/lucene/issues/13593)
- 
 
-- Guava 
+
+- Guava
 
   - Run 0, 1, 2: [#7319 Lingering threads in multiple tests](https://github.com/google/guava/issues/7319)
 
 
 # Reusability Guide
 
-The [Fray](https://github.com/cmu-pasta/fray) repository contains the main documentation of Fray design and implementation. 
+The [Fray](https://github.com/cmu-pasta/fray) repository contains the main documentation of Fray design and implementation.
 
 - [Usage Guide](https://github.com/cmu-pasta/fray/blob/main/docs/usage.md) provides instructions on how to use Fray in normal applications as JUnit tests.
 - [Debugger Plugin](https://github.com/cmu-pasta/fray/blob/main/docs/IDE.md) provides instructions on how to use the Fray dubugger plugin.
@@ -139,7 +141,7 @@ To reproduce a bug found by Fray, you can use the following command:
 python -m fray_benchmark replay RUN_DIR
 ```
 
-For example, you can run `python3 -m fray_benchmark replay ./output/benchmark/sctbench/random/iter-0/0` to reproduce the `StringBufferJDK` bug found in SCTBench. 
+For example, you can run `python3 -m fray_benchmark replay ./output/benchmark/sctbench/random/iter-0/0` to reproduce the `StringBufferJDK` bug found in SCTBench.
 
 Note that real-world applications have randomness other than concurrency, so you may not be able to reproduce the bug deterministically. [This commit](https://github.com/aoli-al/lucene/commit/fd606ec9ec3d603d9c71ee0d74cdee405b554032#diff-70e9ce52bc55b1688f99fd8eb54799b3a94506f8d0990016c6cc723be60b5040R136-R141) shows the changes required to reproduce the bug found in Lucene.
 
