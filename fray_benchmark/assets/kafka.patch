@@ -1,5 +1,5 @@
 diff --git a/build.gradle b/build.gradle
-index 3c202567b0..6a76b68b75 100644
+index 3c202567b0..63501f6a4c 100644
 --- a/build.gradle
 +++ b/build.gradle
 @@ -730,7 +730,7 @@ subprojects {
@@ -22,7 +22,25 @@ index 3c202567b0..6a76b68b75 100644
    //  Hence, we apply spotless tasks only if the env is either JDK11 or JDK17
    if ((JavaVersion.current().isJava11() || (JavaVersion.current() == JavaVersion.VERSION_17))) {
      apply plugin: 'com.diffplug.spotless'
-@@ -2352,6 +2352,27 @@ project(':streams') {
+@@ -1784,6 +1784,17 @@ project(':raft') {
+   javadoc {
+     enabled = false
+   }
++
++  tasks.create(name: "copyDependencies", type: Copy) {
++    from (configurations.testRuntimeClasspath) {
++      include('*.jar')
++    }
++    into "$buildDir/dependency"
++    //By default gradle does not handle test dependencies between the sub-projects
++    //This line is to include clients project test jar to dependant-testlibs
++    from (project(':clients').testJar ) { "$buildDir/dependant-testlibs" }
++    duplicatesStrategy 'exclude'
++  }
+ }
+ 
+ project(':server-common') {
+@@ -2352,6 +2363,27 @@ project(':streams') {
      exclude "**/org/apache/kafka/streams/internals/**", "**/org/apache/kafka/streams/**/internals/**"
    }
  
@@ -50,3 +68,22 @@ index 3c202567b0..6a76b68b75 100644
    tasks.create(name: "copyDependantLibs", type: Copy) {
      from (configurations.runtimeClasspath) {
        exclude('kafka-clients*')
+@@ -2390,6 +2422,18 @@ project(':streams') {
+     dependsOn testJar
+   }
+ 
++  tasks.create(name: "copyDependencies", type: Copy) {
++    from (configurations.testRuntimeClasspath) {
++      include('*.jar')
++    }
++    into "$buildDir/dependency"
++    //By default gradle does not handle test dependencies between the sub-projects
++    //This line is to include clients project test jar to dependant-testlibs
++    from (project(':clients').testJar ) { "$buildDir/dependant-testlibs" }
++    duplicatesStrategy 'exclude'
++  }
++
++
+   task genStreamsConfigDocs(type: JavaExec) {
+     classpath = sourceSets.main.runtimeClasspath
+     mainClass = 'org.apache.kafka.streams.StreamsConfig'
