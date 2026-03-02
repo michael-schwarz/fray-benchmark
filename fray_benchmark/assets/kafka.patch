@@ -1,27 +1,8 @@
 diff --git a/build.gradle b/build.gradle
-index 3c202567b0..4096023d81 100644
+index 3c202567b0..7b552938d6 100644
 --- a/build.gradle
 +++ b/build.gradle
-@@ -18,18 +18,6 @@ import org.gradle.api.JavaVersion
- 
- import java.nio.charset.StandardCharsets
- 
--buildscript {
--  repositories {
--    mavenCentral()
--  }
--  apply from: "$rootDir/gradle/dependencies.gradle"
--
--  dependencies {
--    // For Apache Rat plugin to ignore non-Git files
--    classpath "org.ajoberstar.grgit:grgit-core:$versions.grgit"
--  }
--}
--
- plugins {
-   id 'com.github.ben-manes.versions' version '0.48.0'
-   id 'idea'
-@@ -311,6 +299,8 @@ subprojects {
+@@ -311,6 +311,8 @@ subprojects {
      addParametersForTests(name, options)
    }
  
@@ -30,7 +11,7 @@ index 3c202567b0..4096023d81 100644
    java {
      // We should only set this if Java version is < 9 (--release is recommended for >= 9), but the Scala plugin for IntelliJ sets
      // `-target` incorrectly if this is unset
-@@ -730,7 +720,7 @@ subprojects {
+@@ -730,7 +732,7 @@ subprojects {
        jacoco {
          toolVersion = versions.jacoco
        }
@@ -39,7 +20,7 @@ index 3c202567b0..4096023d81 100644
        jacocoTestReport {
          dependsOn tasks.test
          sourceSets sourceSets.main
-@@ -754,8 +744,8 @@ subprojects {
+@@ -754,8 +756,8 @@ subprojects {
      skipProjects = [ ":jmh-benchmarks", ":trogdor" ]
      skipConfigurations = [ "zinc" ]
    }
@@ -50,7 +31,7 @@ index 3c202567b0..4096023d81 100644
    //  Hence, we apply spotless tasks only if the env is either JDK11 or JDK17
    if ((JavaVersion.current().isJava11() || (JavaVersion.current() == JavaVersion.VERSION_17))) {
      apply plugin: 'com.diffplug.spotless'
-@@ -1784,6 +1774,17 @@ project(':raft') {
+@@ -1784,6 +1786,17 @@ project(':raft') {
    javadoc {
      enabled = false
    }
@@ -68,7 +49,7 @@ index 3c202567b0..4096023d81 100644
  }
  
  project(':server-common') {
-@@ -2352,6 +2353,8 @@ project(':streams') {
+@@ -2352,6 +2365,8 @@ project(':streams') {
      exclude "**/org/apache/kafka/streams/internals/**", "**/org/apache/kafka/streams/**/internals/**"
    }
  
@@ -77,7 +58,7 @@ index 3c202567b0..4096023d81 100644
    tasks.create(name: "copyDependantLibs", type: Copy) {
      from (configurations.runtimeClasspath) {
        exclude('kafka-clients*')
-@@ -2390,6 +2393,18 @@ project(':streams') {
+@@ -2390,6 +2405,18 @@ project(':streams') {
      dependsOn testJar
    }
  
@@ -96,7 +77,7 @@ index 3c202567b0..4096023d81 100644
    task genStreamsConfigDocs(type: JavaExec) {
      classpath = sourceSets.main.runtimeClasspath
      mainClass = 'org.apache.kafka.streams.StreamsConfig'
-@@ -3523,3 +3538,35 @@ task aggregatedJavadoc(type: Javadoc, dependsOn: compileJava) {
+@@ -3523,3 +3550,35 @@ task aggregatedJavadoc(type: Javadoc, dependsOn: compileJava) {
    includes = projectsWithJavadoc.collectMany { it.javadoc.getIncludes() }
    excludes = projectsWithJavadoc.collectMany { it.javadoc.getExcludes() }
  }
