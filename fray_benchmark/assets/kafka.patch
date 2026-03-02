@@ -1,17 +1,8 @@
 diff --git a/build.gradle b/build.gradle
-index 3c202567b0..b0c3975b3b 100644
+index 3c202567b0..903c4e1e4e 100644
 --- a/build.gradle
 +++ b/build.gradle
-@@ -311,6 +311,8 @@ subprojects {
-     addParametersForTests(name, options)
-   }
- 
-+
-+
-   java {
-     // We should only set this if Java version is < 9 (--release is recommended for >= 9), but the Scala plugin for IntelliJ sets
-     // `-target` incorrectly if this is unset
-@@ -730,7 +732,7 @@ subprojects {
+@@ -730,7 +730,7 @@ subprojects {
        jacoco {
          toolVersion = versions.jacoco
        }
@@ -20,7 +11,7 @@ index 3c202567b0..b0c3975b3b 100644
        jacocoTestReport {
          dependsOn tasks.test
          sourceSets sourceSets.main
-@@ -754,8 +756,8 @@ subprojects {
+@@ -754,8 +754,8 @@ subprojects {
      skipProjects = [ ":jmh-benchmarks", ":trogdor" ]
      skipConfigurations = [ "zinc" ]
    }
@@ -31,7 +22,7 @@ index 3c202567b0..b0c3975b3b 100644
    //  Hence, we apply spotless tasks only if the env is either JDK11 or JDK17
    if ((JavaVersion.current().isJava11() || (JavaVersion.current() == JavaVersion.VERSION_17))) {
      apply plugin: 'com.diffplug.spotless'
-@@ -1784,6 +1786,17 @@ project(':raft') {
+@@ -1784,6 +1784,28 @@ project(':raft') {
    javadoc {
      enabled = false
    }
@@ -40,44 +31,56 @@ index 3c202567b0..b0c3975b3b 100644
 +    from (configurations.testRuntimeClasspath) {
 +      include('*.jar')
 +    }
++
++    from({
++      configurations.testRuntimeClasspath.files.collect { File jar ->
++        // foo.jar -> foo-sources.jar
++        new File(jar.parentFile, jar.name.replaceFirst(/\.jar$/, '-sources.jar'))
++      }.findAll { it.exists() }
++    }) {
++      include('*.jar')
++    }
++
 +    into "$buildDir/dependency"
 +    //By default gradle does not handle test dependencies between the sub-projects
 +    //This line is to include clients project test jar to dependant-testlibs
 +    from (project(':clients').testJar ) { "$buildDir/dependant-testlibs" }
++    from (project(':clients').testSrcJar ) { "$buildDir/dependant-testlibs" }
 +    duplicatesStrategy 'exclude'
 +  }
  }
  
  project(':server-common') {
-@@ -2352,6 +2365,8 @@ project(':streams') {
-     exclude "**/org/apache/kafka/streams/internals/**", "**/org/apache/kafka/streams/**/internals/**"
-   }
- 
-+
-+
-   tasks.create(name: "copyDependantLibs", type: Copy) {
-     from (configurations.runtimeClasspath) {
-       exclude('kafka-clients*')
-@@ -2390,6 +2405,18 @@ project(':streams') {
+@@ -2390,6 +2412,28 @@ project(':streams') {
      dependsOn testJar
    }
  
-+  tasks.create(name: "copyDependencies", type: Copy) {
++ tasks.create(name: "copyDependencies", type: Copy) {
 +    from (configurations.testRuntimeClasspath) {
 +      include('*.jar')
 +    }
++
++    from({
++      configurations.testRuntimeClasspath.files.collect { File jar ->
++        // foo.jar -> foo-sources.jar
++        new File(jar.parentFile, jar.name.replaceFirst(/\.jar$/, '-sources.jar'))
++      }.findAll { it.exists() }
++    }) {
++      include('*.jar')
++    }
++
 +    into "$buildDir/dependency"
 +    //By default gradle does not handle test dependencies between the sub-projects
 +    //This line is to include clients project test jar to dependant-testlibs
 +    from (project(':clients').testJar ) { "$buildDir/dependant-testlibs" }
++    from (project(':clients').testSrcJar ) { "$buildDir/dependant-testlibs" }
 +    duplicatesStrategy 'exclude'
 +  }
-+
 +
    task genStreamsConfigDocs(type: JavaExec) {
      classpath = sourceSets.main.runtimeClasspath
      mainClass = 'org.apache.kafka.streams.StreamsConfig'
-@@ -3523,3 +3550,31 @@ task aggregatedJavadoc(type: Javadoc, dependsOn: compileJava) {
+@@ -3523,3 +3567,31 @@ task aggregatedJavadoc(type: Javadoc, dependsOn: compileJava) {
    includes = projectsWithJavadoc.collectMany { it.javadoc.getIncludes() }
    excludes = projectsWithJavadoc.collectMany { it.javadoc.getExcludes() }
  }
