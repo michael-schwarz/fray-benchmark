@@ -48,3 +48,7 @@ class KafkaBenchmark(UnitTestBenchmark):
             "./gradlew",
             "copyDependencies",
         ], cwd=self.bench_dir)
+        subprocess.call([
+            "./gradlew",
+            "copySourcesToClasses",
+        ], cwd=self.bench_dir)
