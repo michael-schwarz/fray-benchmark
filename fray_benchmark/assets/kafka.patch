@@ -1,36 +1,37 @@
 diff --git a/build.gradle b/build.gradle
-index 3c202567b0..32ad9bfd83 100644
+index 3c202567b0..66c33c2175 100644
 --- a/build.gradle
 +++ b/build.gradle
-@@ -311,6 +311,27 @@ subprojects {
+@@ -311,6 +311,28 @@ subprojects {
      addParametersForTests(name, options)
    }
  
 +  // Copy Java sources into the classes output dirs so build/classes/java contains both .class and .java
-+  tasks.named('compileJava', JavaCompile).configure { JavaCompile t ->
-+    doLast {
-+      copy {
-+        from(sourceSets.main.allSource.matching { include '**/*.java' })
-+        // This is typically: project/build/classes/java/main
-+        into(t.destinationDirectory.get().asFile)
++  // Skip projects that apply the Scala plugin to avoid scala/javac joint-compilation issues
++  if (!plugins.hasPlugin('scala')) {
++    tasks.named('compileJava', JavaCompile).configure { JavaCompile t ->
++      doLast {
++        copy {
++          from(sourceSets.main.allSource.matching { include '**/*.java' })
++          into(t.destinationDirectory.get().asFile)
++        }
 +      }
 +    }
-+  }
 +
-+  tasks.named('compileTestJava', JavaCompile).configure { JavaCompile t ->
-+    doLast {
-+      copy {
-+        from(sourceSets.test.allSource.matching { include '**/*.java' })
-+        // This is typically: project/build/classes/java/test
-+        into(t.destinationDirectory.get().asFile)
-+      }
-+   }
++    tasks.named('compileTestJava', JavaCompile).configure { JavaCompile t ->
++      doLast {
++        copy {
++          from(sourceSets.test.allSource.matching { include '**/*.java' })
++          into(t.destinationDirectory.get().asFile)
++        }
++     }
++    }
 +  }
 +
    java {
      // We should only set this if Java version is < 9 (--release is recommended for >= 9), but the Scala plugin for IntelliJ sets
      // `-target` incorrectly if this is unset
-@@ -730,7 +751,7 @@ subprojects {
+@@ -730,7 +752,7 @@ subprojects {
        jacoco {
          toolVersion = versions.jacoco
        }
@@ -39,7 +40,7 @@ index 3c202567b0..32ad9bfd83 100644
        jacocoTestReport {
          dependsOn tasks.test
          sourceSets sourceSets.main
-@@ -754,8 +775,8 @@ subprojects {
+@@ -754,8 +776,8 @@ subprojects {
      skipProjects = [ ":jmh-benchmarks", ":trogdor" ]
      skipConfigurations = [ "zinc" ]
    }
@@ -50,7 +51,7 @@ index 3c202567b0..32ad9bfd83 100644
    //  Hence, we apply spotless tasks only if the env is either JDK11 or JDK17
    if ((JavaVersion.current().isJava11() || (JavaVersion.current() == JavaVersion.VERSION_17))) {
      apply plugin: 'com.diffplug.spotless'
-@@ -1784,6 +1805,17 @@ project(':raft') {
+@@ -1784,6 +1806,17 @@ project(':raft') {
    javadoc {
      enabled = false
    }
@@ -68,35 +69,16 @@ index 3c202567b0..32ad9bfd83 100644
  }
  
  project(':server-common') {
-@@ -2352,6 +2384,27 @@ project(':streams') {
+@@ -2352,6 +2385,8 @@ project(':streams') {
      exclude "**/org/apache/kafka/streams/internals/**", "**/org/apache/kafka/streams/**/internals/**"
    }
  
-+  // Copy Java sources into the classes output dirs so build/classes/java contains both .class and .java
-+  tasks.named('compileJava', JavaCompile).configure { JavaCompile t ->
-+    doLast {
-+      copy {
-+        from(sourceSets.main.allSource.matching { include '**/*.java' })
-+        // This is typically: streams/build/classes/java/main
-+        into(t.destinationDirectory.get().asFile)
-+      }
-+    }
-+  }
 +
-+  tasks.named('compileTestJava', JavaCompile).configure { JavaCompile t ->
-+    doLast {
-+      copy {
-+        from(sourceSets.test.allSource.matching { include '**/*.java' })
-+        // This is typically: streams/build/classes/java/test
-+        into(t.destinationDirectory.get().asFile)
-+      }
-+    }
-+  }
 +
    tasks.create(name: "copyDependantLibs", type: Copy) {
      from (configurations.runtimeClasspath) {
        exclude('kafka-clients*')
-@@ -2390,6 +2443,18 @@ project(':streams') {
+@@ -2390,6 +2425,18 @@ project(':streams') {
      dependsOn testJar
    }
  
