@@ -376,6 +376,39 @@ class BenchmarkSuite:
         df_pivot.dropna(subset=[fray_key, candidate_key], inplace=True)
         return self.generate_aggregated_plot(df, "exec")
 
+    def generate_exec_speed_table_prime(self) -> matplotlib.axis.Axis:
+        df = self.to_aggregated_dataframe()
+        df = df[df["error"] != "Failure"]
+        df["exec"] = df["total_iter"] / df["total_time"]
+        df = df.sort_values(by="id")
+        df = df[df['error'] == 'NoError']
+        target_cols = ["RANDOM-ORIGIN", TOOL_RANDOM]
+
+        df = (
+            df[df["Technique"].isin(target_cols)]
+            .pivot_table(index="id", columns="Technique", values="total_iter", aggfunc="first")
+            .reset_index()
+            .rename(columns={"RANDOM-ORIGIN": "original", TOOL_RANDOM: "ours"})
+        )
+
+
+        if "original" not in df.columns:
+            df["original"] = np.nan
+        if "ours" not in df.columns:
+            df["ours"] = np.nan
+
+        df = df[(df["original"].notna()) & (df["ours"].notna()) & (df["original"] != -1.0) & (df["ours"] != -1.0)]
+
+        df = df[["id", "original", "ours"]].sort_values("id").reset_index(drop=True)
+        df["slowdown"] = ( df["original"] - df ["ours"]) / df["original"] * 100
+
+        with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
+            display(df)
+
+        #Calculate and print geomean of slowdown
+        slowdown_geomean = np.exp(np.log(df["slowdown"] + 100).mean()) - 100
+        print(f"Geometric mean of slowdown: {slowdown_geomean:.2f}%")
+
     def generate_bug_over_time_fig(self, measurement: str) -> matplotlib.axes.Axes:
         df = self.to_aggregated_dataframe()
         total_bugs =df["id"].nunique()
