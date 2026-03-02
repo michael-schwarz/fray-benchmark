@@ -1,37 +1,62 @@
 diff --git a/build.gradle b/build.gradle
-index 3c202567b0..66c33c2175 100644
+index 3c202567b0..838f3d44d8 100644
 --- a/build.gradle
 +++ b/build.gradle
-@@ -311,6 +311,28 @@ subprojects {
-     addParametersForTests(name, options)
+@@ -30,6 +30,44 @@ buildscript {
    }
+ }
  
-+  // Copy Java sources into the classes output dirs so build/classes/java contains both .class and .java
-+  // Skip projects that apply the Scala plugin to avoid scala/javac joint-compilation issues
-+  if (!plugins.hasPlugin('scala')) {
-+    tasks.named('compileJava', JavaCompile).configure { JavaCompile t ->
-+      doLast {
-+        copy {
-+          from(sourceSets.main.allSource.matching { include '**/*.java' })
-+          into(t.destinationDirectory.get().asFile)
++// Root-level task: copy Java sources into each project's classes output directories
++// This runs after the main `build` finishes to avoid interfering with compilation (especially Scala joint-compilation).
++tasks.register('copySourcesToClasses') {
++  doLast {
++    subprojects.each { p ->
++      p.afterEvaluate {
++        if (!p.plugins.hasPlugin('scala')) {
++          def compileJavaTask = p.tasks.findByName('compileJava')
++          if (compileJavaTask != null) {
++            def dest = compileJavaTask.destinationDirectory.get().asFile
++            if (p.sourceSets?.main) {
++              copy {
++                from(p.sourceSets.main.allSource.matching { include '**/*.java' })
++                into(dest)
++              }
++            }
++          }
++
++          def compileTestJavaTask = p.tasks.findByName('compileTestJava')
++          if (compileTestJavaTask != null) {
++            def destTest = compileTestJavaTask.destinationDirectory.get().asFile
++            if (p.sourceSets?.test) {
++              copy {
++                from(p.sourceSets.test.allSource.matching { include '**/*.java' })
++                into(destTest)
++              }
++            }
++          }
 +        }
 +      }
 +    }
-+
-+    tasks.named('compileTestJava', JavaCompile).configure { JavaCompile t ->
-+      doLast {
-+        copy {
-+          from(sourceSets.test.allSource.matching { include '**/*.java' })
-+          into(t.destinationDirectory.get().asFile)
-+        }
-+     }
-+    }
 +  }
++}
++
++tasks.named('build') {
++  finalizedBy('copySourcesToClasses')
++}
++
+ plugins {
+   id 'com.github.ben-manes.versions' version '0.48.0'
+   id 'idea'
+@@ -311,6 +349,8 @@ subprojects {
+     addParametersForTests(name, options)
+   }
+ 
++
 +
    java {
      // We should only set this if Java version is < 9 (--release is recommended for >= 9), but the Scala plugin for IntelliJ sets
      // `-target` incorrectly if this is unset
-@@ -730,7 +752,7 @@ subprojects {
+@@ -730,7 +770,7 @@ subprojects {
        jacoco {
          toolVersion = versions.jacoco
        }
@@ -40,7 +65,7 @@ index 3c202567b0..66c33c2175 100644
        jacocoTestReport {
          dependsOn tasks.test
          sourceSets sourceSets.main
-@@ -754,8 +776,8 @@ subprojects {
+@@ -754,8 +794,8 @@ subprojects {
      skipProjects = [ ":jmh-benchmarks", ":trogdor" ]
      skipConfigurations = [ "zinc" ]
    }
@@ -51,7 +76,7 @@ index 3c202567b0..66c33c2175 100644
    //  Hence, we apply spotless tasks only if the env is either JDK11 or JDK17
    if ((JavaVersion.current().isJava11() || (JavaVersion.current() == JavaVersion.VERSION_17))) {
      apply plugin: 'com.diffplug.spotless'
-@@ -1784,6 +1806,17 @@ project(':raft') {
+@@ -1784,6 +1824,17 @@ project(':raft') {
    javadoc {
      enabled = false
    }
@@ -69,7 +94,7 @@ index 3c202567b0..66c33c2175 100644
  }
  
  project(':server-common') {
-@@ -2352,6 +2385,8 @@ project(':streams') {
+@@ -2352,6 +2403,8 @@ project(':streams') {
      exclude "**/org/apache/kafka/streams/internals/**", "**/org/apache/kafka/streams/**/internals/**"
    }
  
@@ -78,7 +103,7 @@ index 3c202567b0..66c33c2175 100644
    tasks.create(name: "copyDependantLibs", type: Copy) {
      from (configurations.runtimeClasspath) {
        exclude('kafka-clients*')
-@@ -2390,6 +2425,18 @@ project(':streams') {
+@@ -2390,6 +2443,18 @@ project(':streams') {
      dependsOn testJar
    }
  
