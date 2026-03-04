@@ -456,6 +456,43 @@ class BenchmarkSuite:
                       ncols=4, mode="expand", borderaxespad=0.)
         return ax
 
+
+    def generate_bug_found_iterations_fig_not_found(self, exclude_all_zero = False) -> matplotlib.axes.Axes:
+        df = self.to_aggregated_dataframe()
+
+        # Mean bug_iter only for found bugs
+        found_df = (
+            df[df["error"] == "Error"]
+            .groupby(["id", "Technique"], as_index=False)["bug_iter"]
+            .mean()
+        )
+
+        # Build full bug x technique grid, fill missing (not found) with -1
+        all_ids = sorted(df["id"].unique())
+        all_techniques = sorted(df["Technique"].unique())
+        full_index = pd.MultiIndex.from_product(
+            [all_ids, all_techniques], names=["id", "Technique"]
+        )
+
+        df_filtered = (
+            found_df.set_index(["id", "Technique"])
+            .reindex(full_index)
+            .reset_index()
+        )
+        df_filtered["bug_iter"] = df_filtered["bug_iter"].fillna(-1)
+
+        # Exclude those where all techniques found the bug in one iteration
+        if exclude_all_zero:
+            df_filtered = df_filtered[~((df_filtered["bug_iter"] == 1) & (df_filtered["Technique"].duplicated(keep=False)))]
+
+        ax = sns.barplot(data=df_filtered, x="id", y="bug_iter", hue="Technique")
+        ax.set_xlabel("Bug")
+        ax.set_ylabel("Iterations to Find Bug")
+        ax.set_yscale("log")
+        ax.set_title("Iterations to Find Bug (-1 means not found)")
+        plt.xticks(rotation=45, ha="right")
+        return ax
+
     def generate_bug_found_iterations_fig(self) -> matplotlib.axes.Axes:
         df = self.to_aggregated_dataframe()
         df = df[df["error"] == "Error"]
