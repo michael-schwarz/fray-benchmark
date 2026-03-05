@@ -457,7 +457,10 @@ class BenchmarkSuite:
         return ax
 
 
-    def generate_bug_found_iterations_fig_not_found(self, exclude_all_zero = False) -> matplotlib.axes.Axes:
+    def generate_bug_found_iterations_fig_not_found(self, exclude_all_zero = False, exclude_none = False, exclude_some_zero = False) -> matplotlib.axes.Axes:
+        if exclude_all_zero and exclude_some_zero:
+            raise ValueError("Cannot exclude both all zero and some zero")
+
         df = self.to_aggregated_dataframe()
 
         # Mean bug_iter only for found bugs
@@ -481,15 +484,65 @@ class BenchmarkSuite:
         )
         df_filtered["bug_iter"] = df_filtered["bug_iter"].fillna(-1)
 
-        # Exclude those where all techniques found the bug in one iteration
+        # Exclude benchmarks where all techniques found the bug in iteration 1
         if exclude_all_zero:
-            df_filtered = df_filtered[~((df_filtered["bug_iter"] == 1) & (df_filtered["Technique"].duplicated(keep=False)))]
+            benchmarks_to_exclude = (
+                df_filtered[df_filtered["bug_iter"] == 1]
+                .groupby("id")["Technique"]
+                .nunique()
+            )
+            benchmarks_to_exclude = benchmarks_to_exclude[
+                benchmarks_to_exclude == len(all_techniques)
+            ].index
+            df_filtered = df_filtered[~df_filtered["id"].isin(benchmarks_to_exclude)]
+
+        # Exclude benchmarks where at least one technique found the bug in iteration 1
+        if exclude_some_zero:
+            benchmarks_to_exclude = (
+            df_filtered[df_filtered["bug_iter"] == 1]
+            .groupby("id")["Technique"]
+            .nunique()
+            )
+            benchmarks_to_exclude = benchmarks_to_exclude[
+            benchmarks_to_exclude > 0
+            ].index
+            df_filtered = df_filtered[~df_filtered["id"].isin(benchmarks_to_exclude)]
+
+
+        # Exclude those where the bug was not found by any technique
+        if exclude_none:
+            benchmarks_to_exclude = (
+                df_filtered[df_filtered["bug_iter"] == -1]
+                .groupby("id")["Technique"]
+                .nunique()
+            )
+            benchmarks_to_exclude = benchmarks_to_exclude[
+                benchmarks_to_exclude == len(all_techniques)
+            ].index
+            df_filtered = df_filtered[~df_filtered["id"].isin(benchmarks_to_exclude)]
+
+        # Create pivot table: rows = bugs, columns = techniques, values = iterations
+        pivot_table = df_filtered.pivot_table(
+            index="id",
+            columns="Technique",
+            values="bug_iter"
+        )
+
+        with pd.option_context('display.max_rows', None, 'display.max_columns', None):
+            display(pivot_table)
 
         ax = sns.barplot(data=df_filtered, x="id", y="bug_iter", hue="Technique")
         ax.set_xlabel("Bug")
         ax.set_ylabel("Iterations to Find Bug")
         ax.set_yscale("log")
-        ax.set_title("Iterations to Find Bug (-1 means not found)")
+        if exclude_all_zero and exclude_none:
+            ax.set_title("Iterations to Find Bug (where at least one config found the bug, excluding those where all techniques found it in 1 iteration)")
+        elif exclude_all_zero:
+            ax.set_title("Iterations to Find Bug (excluding those where all techniques found it in 1 iteration)")
+        elif exclude_some_zero:
+            ax.set_title("Iterations to Find Bug (excluding those where at least one technique found it in 1 iteration)")
+        else:
+            ax.set_title("Iterations to Find Bug")
         plt.xticks(rotation=45, ha="right")
         return ax
 
