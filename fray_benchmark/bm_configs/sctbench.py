@@ -24,5 +24,5 @@ class SCTBenchBenchmark(MainMethodBenchmark):
     def build(self) -> None:
         subprocess.call([
             "./gradlew",
-            "jar",
+            "build",
         ], cwd=self.bench_dir)
