@@ -7,6 +7,7 @@ SCHEDULERS = {
     "surw": ['--scheduler=surw'],
     "random": ['--scheduler=random'],
     "llm-concurr-fuzz" : ['--scheduler=llm-concurr-fuzz', '--llmdir=/home/michael/Documents/software/fray2/fray/llm-stuff/'],
+    "llm-automaton-concurr-fuzz" : ['--scheduler=llm-automaton-concurr-fuzz', '--llmdir=/home/michael/Documents/software/fray2/fray/llm-stuff/'],
     "llm-concurr-fuzz-blind" : ['--scheduler=llm-concurr-fuzz', '--llm-blind', '--llmdir=/home/michael/Documents/software/fray2/fray/llm-stuff/']
 }
 
