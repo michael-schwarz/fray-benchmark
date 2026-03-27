@@ -25,3 +25,27 @@ java {
   withSourcesJar()
 }
 
+// Copy Java sources into the classes output dirs so build/classes/java contains both .class and .java
+tasks.named<JavaCompile>("compileJava").configure {
+    doLast {
+        copy {
+            from(sourceSets.main.get().allSource.matching {
+                include("**/*.java")
+            })
+            // This is typically: project/build/classes/java/main
+            into(destinationDirectory.get().asFile)
+        }
+    }
+}
+
+tasks.named<JavaCompile>("compileTestJava").configure {
+    doLast {
+        copy {
+            from(sourceSets.test.get().allSource.matching {
+                include("**/*.java")
+            })
+            // This is typically: project/build/classes/java/test
+            into(destinationDirectory.get().asFile)
+        }
+    }
+}
