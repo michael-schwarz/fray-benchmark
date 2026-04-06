@@ -5,11 +5,11 @@ SCHEDULERS = {
     "pct15": ['--scheduler=pct', '--num-switch-points=15'],
     "pos": ['--scheduler=pos'],
     "surw": ['--scheduler=surw'],
-    "random": ['--scheduler=random'],
+    "random": ['--scheduler=random', '--interruptPoints'],
     "llm-concurr-fuzz" : ['--scheduler=llm-concurr-fuzz', '--llmdir=/home/michael/Documents/software/fray2/fray/llm-stuff/'],
     "llm-automaton-concurr-fuzz" : ['--scheduler=llm-automaton-concurr-fuzz', '--llmdir=/home/michael/Documents/software/fray2/fray/llm-stuff/'],
     "llm-automaton-more" : ['--scheduler=llm-automaton-concurr-fuzz', '--llmdir=/home/michael/Documents/software/fray2/fray/llm-stuff/', "--llm-num-traces-in-prompt=5", "--llm-runs-until-llm=100"],
-    "llm-combined" : ['--scheduler=llm-combined-concurr-fuzz', '--llmdir=/home/michael/Documents/software/fray2/fray/llm-stuff/', "--llm-num-traces-in-prompt=5", "--llm-runs-until-llm=100"],
+    "llm-combined" : ['--scheduler=llm-combined-concurr-fuzz', '--interruptPoints' '--llmdir=/home/michael/Documents/software/fray2/fray/llm-stuff/', "--llm-num-traces-in-prompt=5", "--llm-runs-until-llm=100"],
     "llm-concurr-fuzz-blind" : ['--scheduler=llm-concurr-fuzz', '--llm-blind', '--llmdir=/home/michael/Documents/software/fray2/fray/llm-stuff/']
 }
 
