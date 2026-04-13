@@ -1,0 +1,4 @@
+org.apache.kafka.streams.KafkaStreamsTest#shouldReturnFalseOnCloseWhenThreadsHaventTerminated
+org.apache.kafka.streams.processor.internals.DefaultStateUpdaterTest#shouldResumeStandbyTask
+org.apache.kafka.streams.processor.internals.tasks.DefaultTaskManagerTest#shouldBlockOnAwait
+org.apache.kafka.streams.processor.internals.DefaultStateUpdaterTest#shouldGetTasksFromRestoredActiveTasks
