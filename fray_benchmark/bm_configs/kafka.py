@@ -20,7 +20,7 @@ class KafkaBenchmark(UnitTestBenchmark):
                 os.path.join(self.bench_dir, "streams/src/main/java/"),
                 os.path.join(self.bench_dir,
                              "streams/build/dependency/*.jar"),
-            ], load_test_cases(os.path.join(ASSETS_PATH, f"kafka.txt")),
+            ], load_test_cases(os.path.join(ASSETS_PATH, f"kafka4.txt")),
             {
             },
             False)

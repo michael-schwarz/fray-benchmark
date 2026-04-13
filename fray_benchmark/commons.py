@@ -6,11 +6,11 @@ SCHEDULERS = {
     "pos": ['--scheduler=pos', '--interruptPoints'],
     "surw": ['--scheduler=surw', '--interruptPoints'],
     "random": ['--scheduler=random', '--interruptPoints'],
-    "llm-combined-1" : ['--scheduler=llm-combined-concurr-fuzz', '--llm-max-runs=1', '--interruptPoints', '--llmdir=/home/michael/Documents/software/fray2/fray/llm-stuff/', "--llm-num-traces-in-prompt=10", "--llm-runs-until-llm=200"],
-    "llm-combined-2" : ['--scheduler=llm-combined-concurr-fuzz', '--llm-max-runs=2', '--interruptPoints', '--llmdir=/home/michael/Documents/software/fray2/fray/llm-stuff/', "--llm-num-traces-in-prompt=10", "--llm-runs-until-llm=200"],
-    "llm-combined-4" : ['--scheduler=llm-combined-concurr-fuzz', '--llm-max-runs=4', '--interruptPoints', '--llmdir=/home/michael/Documents/software/fray2/fray/llm-stuff/', "--llm-num-traces-in-prompt=10", "--llm-runs-until-llm=200"],
-    "llm-combined-8" : ['--scheduler=llm-combined-concurr-fuzz', '--llm-max-runs=8', '--interruptPoints', '--llmdir=/home/michael/Documents/software/fray2/fray/llm-stuff/', "--llm-num-traces-in-prompt=10", "--llm-runs-until-llm=200"],
-    "llm-combined-16" : ['--scheduler=llm-combined-concurr-fuzz', '--llm-max-runs=16', '--interruptPoints', '--llmdir=/home/michael/Documents/software/fray2/fray/llm-stuff/', "--llm-num-traces-in-prompt=10", "--llm-runs-until-llm=200"],
+    "llm-1" : ['--scheduler=llm-combined-concurr-fuzz', '--llm-max-runs=1', '--interruptPoints', '--llmdir=/home/michael/Documents/software/fray2/fray/llm-stuff/', "--llm-num-traces-in-prompt=10", "--llm-runs-until-llm=200"],
+    "llm-2" : ['--scheduler=llm-combined-concurr-fuzz', '--llm-max-runs=2', '--interruptPoints', '--llmdir=/home/michael/Documents/software/fray2/fray/llm-stuff/', "--llm-num-traces-in-prompt=10", "--llm-runs-until-llm=200"],
+    "llm-4" : ['--scheduler=llm-combined-concurr-fuzz', '--llm-max-runs=4', '--interruptPoints', '--llmdir=/home/michael/Documents/software/fray2/fray/llm-stuff/', "--llm-num-traces-in-prompt=10", "--llm-runs-until-llm=200"],
+    "llm-8" : ['--scheduler=llm-combined-concurr-fuzz', '--llm-max-runs=8', '--interruptPoints', '--llmdir=/home/michael/Documents/software/fray2/fray/llm-stuff/', "--llm-num-traces-in-prompt=10", "--llm-runs-until-llm=200"],
+    "llm-16" : ['--scheduler=llm-combined-concurr-fuzz', '--llm-max-runs=16', '--interruptPoints', '--llmdir=/home/michael/Documents/software/fray2/fray/llm-stuff/', "--llm-num-traces-in-prompt=10", "--llm-runs-until-llm=200"],
 }
 
 FRAY_VERSION = "0.5.2-SNAPSHOT"
