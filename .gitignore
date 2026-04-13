@@ -4,6 +4,11 @@ gradle/wrapper/gradle-wrapper.jar
 **/src/main/**/build/
 **/src/test/**/build/
 **/__pycache__/**
+tmp-out/*
+tmp-out-pos/*
+tmp-out-rand/*
+tmp-out-llm/**
+2g2bt/**
 
 ### IntelliJ IDEA ###
 .idea/modules.xml
