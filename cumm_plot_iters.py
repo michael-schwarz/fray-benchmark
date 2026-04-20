@@ -210,6 +210,8 @@ def main():
             plt.axvline(x=xpos, linestyle="--", color="black")
 
         plt.xlim(0, global_max_x)
+        plt.xlabel("number of iterations")
+        plt.ylabel("interruptPointSets with firstIteration <= x")
         plt.legend()
         plt.title(f"Subject {subject}")
         plt.grid(True)
@@ -230,6 +232,8 @@ def main():
 
         plt.xscale("log")
         plt.xlim(1, global_max_x)
+        plt.xlabel("number of iterations")
+        plt.ylabel("interruptPointSets with firstIteration <= x")
         plt.legend()
         plt.title(f"Subject {subject} (log)")
         plt.grid(True)
@@ -254,6 +258,8 @@ def main():
 
         plt.xlim(0, 10000)
         plt.ylim(0, visible_y_max if visible_y_max > 0 else 1)
+        plt.xlabel("number of iterations")
+        plt.ylabel("interruptPointSets with firstIteration <= x")
         plt.legend()
         plt.title(f"Subject {subject} (0–10k)")
         plt.grid(True)
