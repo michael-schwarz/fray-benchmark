@@ -167,7 +167,7 @@ def main():
     parser.add_argument(
         "--base-dir",
         type=str,
-        default="/home/michael/Documents/software/fray-benchmark/output/realworld-long/kafka",
+        default="/home/michael/Documents/software/fray-benchmark/output/realworld-apr20/lincheck",
         help="Base directory containing technique folders",
     )
     parser.add_argument(
@@ -179,7 +179,7 @@ def main():
     parser.add_argument(
         "--backoff",
         type=int,
-        default=5,
+        default=200,
         help="Initial dashed-line position; subsequent gaps double each time",
     )
     args = parser.parse_args()
@@ -211,7 +211,7 @@ def main():
         x, mean_y, min_y, max_y, technique_max_x = summarize_runs(runs)
         global_max_x = max(global_max_x, technique_max_x)
 
-        line, = plt.plot(x, mean_y, label=label)
+        line, = plt.plot(x, mean_y, label=f"{label} ({len(runs)})")
         plt.fill_between(x, min_y, max_y, alpha=0.2, color=line.get_color())
 
     if global_max_x == 0:
