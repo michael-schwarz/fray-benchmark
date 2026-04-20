@@ -161,6 +161,87 @@ def generate_backoff_lines(max_x, backoff):
     return positions
 
 
+def plot_subject(techniques, subject, backoff, output):
+    plt.figure(figsize=(10, 6))
+    global_max_x = 0
+
+    for label, technique_path in techniques.items():
+        if not technique_path.exists():
+            print(f"Skipping missing technique folder: {technique_path}")
+            continue
+
+        runs = collect_subject_runs(technique_path, subject)
+        if not runs:
+            print(f"No valid runs found for {label}, subject {subject}")
+            continue
+
+        x, mean_y, min_y, max_y, technique_max_x = summarize_runs(runs)
+        global_max_x = max(global_max_x, technique_max_x)
+
+        line, = plt.plot(x, mean_y, label=f"{label} ({len(runs)})")
+        plt.fill_between(x, min_y, max_y, alpha=0.2, color=line.get_color())
+
+    if global_max_x == 0:
+        global_max_x = 1
+
+    for xpos in generate_backoff_lines(global_max_x, backoff):
+        plt.axvline(x=xpos, linewidth=2.0, linestyle="--", color="black")
+
+    plt.xlim(0, global_max_x)
+    plt.xlabel("numberOfIteration")
+    plt.ylabel("number of interruptPoints sets with firstIteration <= x")
+    plt.title(f"Cumulative number of interruptPoints sets by iteration (subject {subject})")
+    plt.legend()
+    plt.grid(True, alpha=0.3)
+    plt.tight_layout()
+    plt.savefig(output, dpi=200)
+    plt.close()
+
+    return global_max_x
+
+
+def plot_subject_log(techniques, subject, backoff, output, global_max_x):
+    plt.figure(figsize=(10, 6))
+
+    for label, technique_path in techniques.items():
+        if not technique_path.exists():
+            continue
+
+        runs = collect_subject_runs(technique_path, subject)
+        if not runs:
+            continue
+
+        x, mean_y, min_y, max_y, _ = summarize_runs(runs)
+
+        # Log scale cannot display x=0. Drop that point entirely.
+        positive_mask = x > 0
+        x_log = x[positive_mask]
+        mean_y_log = mean_y[positive_mask]
+        min_y_log = min_y[positive_mask]
+        max_y_log = max_y[positive_mask]
+
+        if len(x_log) == 0:
+            continue
+
+        line, = plt.plot(x_log, mean_y_log, label=f"{label} ({len(runs)})")
+        plt.fill_between(x_log, min_y_log, max_y_log, alpha=0.2, color=line.get_color())
+
+    for xpos in generate_backoff_lines(global_max_x, backoff):
+        if xpos > 0:
+            plt.axvline(x=xpos, linewidth=2.0, linestyle="--", color="black")
+
+    plt.xscale("log")
+    plt.xlim(1, global_max_x)
+    plt.xlabel("numberOfIteration")
+    plt.ylabel("number of interruptPoints sets with firstIteration <= x")
+    plt.title(f"Cumulative number of interruptPoints sets by iteration (subject {subject}, log x-axis)")
+    plt.legend()
+    plt.grid(True, alpha=0.3)
+    plt.tight_layout()
+    plt.savefig(output, dpi=200)
+    plt.close()
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--subject", type=int, required=True, help="Subject number, e.g. 0..3")
@@ -195,44 +276,15 @@ def main():
         "llm-8": base_dir / "llm-8",
     }
 
-    plt.figure(figsize=(10, 6))
-    global_max_x = 0
-
-    for label, technique_path in techniques.items():
-        if not technique_path.exists():
-            print(f"Skipping missing technique folder: {technique_path}")
-            continue
-
-        runs = collect_subject_runs(technique_path, subject)
-        if not runs:
-            print(f"No valid runs found for {label}, subject {subject}")
-            continue
-
-        x, mean_y, min_y, max_y, technique_max_x = summarize_runs(runs)
-        global_max_x = max(global_max_x, technique_max_x)
-
-        line, = plt.plot(x, mean_y, label=f"{label} ({len(runs)})")
-        plt.fill_between(x, min_y, max_y, alpha=0.2, color=line.get_color())
-
-    if global_max_x == 0:
-        global_max_x = 1
-
-    for xpos in generate_backoff_lines(global_max_x, backoff):
-        plt.axvline(x=xpos, linewidth=2.0, linestyle="--", color="black")
-
-    plt.xlim(0, global_max_x)
-    plt.xlabel("numberOfIteration")
-    plt.ylabel("number of interruptPoints sets with firstIteration <= x")
-    plt.title(f"Cumulative number of interruptPoints sets by iteration (subject {subject})")
-    plt.legend()
-    plt.grid(True, alpha=0.3)
-    plt.tight_layout()
-
     output = args.output or f"plot-subject-{subject}.png"
-    plt.savefig(output, dpi=200)
-    plt.close()
+    global_max_x = plot_subject(techniques, subject, backoff, output)
+
+    output_path = Path(output)
+    log_output = output_path.with_name(f"{output_path.stem}-log{output_path.suffix}")
+    plot_subject_log(techniques, subject, backoff, str(log_output), global_max_x)
 
     print(f"Saved plot to {output}")
+    print(f"Saved log plot to {log_output}")
 
 
 if __name__ == "__main__":
