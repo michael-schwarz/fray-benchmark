@@ -143,7 +143,13 @@ def parse_subjects(arg):
 
 
 def plot_standard(x, mean_y, min_y, max_y, label, runs):
-    line, = plt.plot(x, mean_y, label=f"{label} ({len(runs)})")
+    line, = plt.plot(x, mean_y, linewidth=2, label=f"{label} ({len(runs)})")
+
+    for run in runs:
+        run_x = np.arange(run["total_iter"] + 1, dtype=int)
+        run_y = pad_curve(run["curve"], len(run_x))
+        plt.plot(run_x, run_y, color=line.get_color(), alpha=0.7, linewidth=1)
+
     plt.fill_between(x, min_y, max_y, alpha=0.2, color=line.get_color())
 
 
@@ -156,7 +162,7 @@ def main():
         default="/home/michael/Documents/software/fray-benchmark/output/realworld-apr20/lincheck",
         help="Base directory containing technique folders",
     )
-    parser.add_argument("--output", type=str, default="plot.png")
+    parser.add_argument("--output", type=str, default="plots/iset.png")
     parser.add_argument("--backoff", type=int, default=200)
     args = parser.parse_args()
 
@@ -218,6 +224,10 @@ def main():
             x_log[0] = 1
             plot_standard(x_log, mean_y, min_y, max_y, label, runs)
 
+        for xpos in generate_backoff_lines(global_max_x, args.backoff):
+            if xpos >= 1:
+                plt.axvline(x=xpos, linestyle="--", color="black")
+
         plt.xscale("log")
         plt.xlim(1, global_max_x)
         plt.legend()
@@ -229,14 +239,21 @@ def main():
         # ---------- 10k plot ----------
         plt.figure(figsize=(10, 6))
 
+        visible_y_max = 0
+
         for label, (x, mean_y, min_y, max_y, runs) in curves.items():
             mask = x <= 10000
+            if not np.any(mask):
+                continue
+
             plot_standard(x[mask], mean_y[mask], min_y[mask], max_y[mask], label, runs)
+            visible_y_max = max(visible_y_max, np.max(max_y[mask]))
 
         for xpos in generate_backoff_lines(10000, args.backoff):
             plt.axvline(x=xpos, linestyle="--", color="black")
 
         plt.xlim(0, 10000)
+        plt.ylim(0, visible_y_max if visible_y_max > 0 else 1)
         plt.legend()
         plt.title(f"Subject {subject} (0–10k)")
         plt.grid(True)
