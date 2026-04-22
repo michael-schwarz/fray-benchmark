@@ -28,15 +28,25 @@ while [[ $# -gt 0 ]]; do
             ;;
     esac
 done
+echo before critical section
+(
+    flock -x 100
+    echo entered critical section
+    # your code replaces the dummy sleep:
 
-# Always run fray with scheduler pos (basic evaluation)
-python3 -m fray_benchmark run fray lincheck --name realworld --scheduler pos --iterations 5 --timeout=3600 --perf-mode --cpu $CPU_COUNT &
-python3 -m fray_benchmark run fray lincheck --name realworld --scheduler llm-4 --iterations 5 --timeout=3600 --perf-mode --cpu $CPU_COUNT &
-python3 -m fray_benchmark run fray lincheck --name realworld --scheduler random --iterations 5 --timeout=3600 --perf-mode --cpu $CPU_COUNT &
-python3 -m fray_benchmark run fray lincheck --name realworld --scheduler llm-8 --iterations 5 --timeout=3600 --perf-mode --cpu $CPU_COUNT &
-wait
-python3 -m fray_benchmark run fray lincheck --name realworld --scheduler llm-1 --iterations 5 --timeout=3600 --perf-mode --cpu $CPU_COUNT &
-python3 -m fray_benchmark run fray lincheck --name realworld --scheduler pct3 --iterations 5 --timeout=3600 --perf-mode --cpu $CPU_COUNT &
-python3 -m fray_benchmark run fray lincheck --name realworld --scheduler surw --iterations 5 --timeout=3600 --perf-mode --cpu $CPU_COUNT &
-python3 -m fray_benchmark run fray lincheck --name realworld --scheduler llm-2 --iterations 5 --timeout=3600 --perf-mode --cpu $CPU_COUNT &
-wait
+
+    # Always run fray with scheduler pos (basic evaluation)
+    python3 -m fray_benchmark run fray lincheck --name realworld --scheduler pos --iterations 3 --timeout=3600 --perf-mode --cpu $CPU_COUNT &
+    python3 -m fray_benchmark run fray lincheck --name realworld --scheduler llm-4 --iterations 3 --timeout=3600 --perf-mode --cpu $CPU_COUNT &
+    python3 -m fray_benchmark run fray lincheck --name realworld --scheduler random --iterations 3 --timeout=3600 --perf-mode --cpu $CPU_COUNT &
+    python3 -m fray_benchmark run fray lincheck --name realworld --scheduler llm-8 --iterations 3 --timeout=3600 --perf-mode --cpu $CPU_COUNT &
+    # wait
+    # python3 -m fray_benchmark run fray lincheck --name realworld --scheduler llm-1 --iterations 5 --timeout=3600 --perf-mode --cpu $CPU_COUNT &
+    # python3 -m fray_benchmark run fray lincheck --name realworld --scheduler pct3 --iterations 5 --timeout=3600 --perf-mode --cpu $CPU_COUNT &
+    # python3 -m fray_benchmark run fray lincheck --name realworld --scheduler surw --iterations 5 --timeout=3600 --perf-mode --cpu $CPU_COUNT &
+    # python3 -m fray_benchmark run fray lincheck --name realworld --scheduler llm-2 --iterations 5 --timeout=3600 --perf-mode --cpu $CPU_COUNT &
+    # wait
+
+    echo  leaving critical section
+) 100>/tmp/gobcron.flock
+echo after critical section
