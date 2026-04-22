@@ -123,14 +123,17 @@ def generate_backoff_lines(max_x, backoff):
     if backoff <= 0:
         return []
 
+    count = 0
+
     positions = []
     pos = backoff
     step = backoff
 
-    while pos <= max_x:
+    while pos <= max_x and count < 8:
         positions.append(pos)
         step *= 2
         pos += step
+        count += 1
 
     return positions
 
@@ -159,7 +162,7 @@ def main():
     parser.add_argument(
         "--base-dir",
         type=str,
-        default="/home/michael/Documents/software/fray-benchmark/output/realworld-apr20/lincheck",
+        default="/home/michael/Documents/software/fray-benchmark/output/realworld-apr22/lincheck",
         help="Base directory containing technique folders",
     )
     parser.add_argument("--output", type=str, default="plots/iset.png")
@@ -175,8 +178,8 @@ def main():
         "llm-8": Path(args.base_dir) / "llm-8",
         # "llm-2": Path(args.base_dir) / "llm-2",
         # "llm-1": Path(args.base_dir) / "llm-1",
-        "pct3": Path(args.base_dir) / "pct3",
-        "surw": Path(args.base_dir) / "surw"
+        # "pct3": Path(args.base_dir) / "pct3",
+        # "surw": Path(args.base_dir) / "surw"
     }
 
     for subject in subjects:
