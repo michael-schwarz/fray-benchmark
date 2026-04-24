@@ -40,7 +40,7 @@ echo before critical section
     python3 -m fray_benchmark run fray lincheck --name realworld --scheduler llm-4 --iterations 3 --timeout=3600 --perf-mode --cpu $CPU_COUNT &
     python3 -m fray_benchmark run fray lincheck --name realworld --scheduler random --iterations 3 --timeout=3600 --perf-mode --cpu $CPU_COUNT &
     python3 -m fray_benchmark run fray lincheck --name realworld --scheduler llm-8 --iterations 3 --timeout=3600 --perf-mode --cpu $CPU_COUNT &
-    # wait
+    wait
     # python3 -m fray_benchmark run fray lincheck --name realworld --scheduler llm-1 --iterations 5 --timeout=3600 --perf-mode --cpu $CPU_COUNT &
     # python3 -m fray_benchmark run fray lincheck --name realworld --scheduler pct3 --iterations 5 --timeout=3600 --perf-mode --cpu $CPU_COUNT &
     # python3 -m fray_benchmark run fray lincheck --name realworld --scheduler surw --iterations 5 --timeout=3600 --perf-mode --cpu $CPU_COUNT &
