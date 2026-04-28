@@ -16,11 +16,19 @@ def load_json(path):
 
 
 def extract_total_iter(log_path):
+    last_match = None
+
     with open(log_path, "r") as f:
         for line in f:
             match = TOTAL_ITER_RE.search(line)
             if match:
-                return int(match.group(1))
+                if last_match is not None:
+                    print(f"Warning: multiple 'Total iter' matches in {log_path}, using last one")
+                last_match = int(match.group(1))
+
+    if last_match is not None:
+        return last_match
+
     raise ValueError(f"Could not find 'Total iter' in {log_path}")
 
 
@@ -162,7 +170,7 @@ def main():
     parser.add_argument(
         "--base-dir",
         type=str,
-        default="/home/michael/Documents/software/fray-benchmark/output/realworld-apr22/lincheck",
+        default="/home/michael/Documents/software/fray-benchmark/output/realworld-apr24-noiter1/lincheck",
         help="Base directory containing technique folders",
     )
     parser.add_argument("--output", type=str, default="plots/iset.png")
