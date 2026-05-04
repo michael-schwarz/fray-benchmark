@@ -91,7 +91,7 @@ def collect_subject_runs(technique_dir, subject_num):
 
         runs.append({
             "curve": curve,
-            "total_iter": total_iter,
+            "total_iter": total_iter
         })
 
     return runs
@@ -170,7 +170,7 @@ def main():
     parser.add_argument(
         "--base-dir",
         type=str,
-        default="/home/michael/Documents/software/fray-benchmark/output/realworld-apr24-noiter1/lincheck",
+        default="/home/michael/Documents/software/fray-benchmark/output/realworld-apr30/lincheck",
         help="Base directory containing technique folders",
     )
     parser.add_argument("--output", type=str, default="plots/iset.png")
@@ -183,6 +183,7 @@ def main():
         "random": Path(args.base_dir) / "random",
         "pos": Path(args.base_dir) / "pos",
         "llm-4": Path(args.base_dir) / "llm-4",
+        # "llm-4-tune": Path(args.base_dir) / "llm-4-tune",
         "llm-8": Path(args.base_dir) / "llm-8",
         # "llm-2": Path(args.base_dir) / "llm-2",
         # "llm-1": Path(args.base_dir) / "llm-1",
