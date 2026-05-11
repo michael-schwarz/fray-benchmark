@@ -11,6 +11,7 @@ SCHEDULERS = {
     "llm-4" : ['--scheduler=llm-combined-concurr-fuzz', '--llm-iset-feedback', '--llm-max-runs=4', '--interruptPoints', '--llmdir=/home/michael/Documents/software/fray2/fray/llm-stuff/', "--llm-num-traces-in-prompt=10", "--llm-runs-until-llm=200"],
     "llm-8" : ['--scheduler=llm-combined-concurr-fuzz', '--llm-iset-feedback', '--llm-max-runs=8', '--interruptPoints', '--llmdir=/home/michael/Documents/software/fray2/fray/llm-stuff/', "--llm-num-traces-in-prompt=10", "--llm-runs-until-llm=200"],
     "llm-8-gpt5" : ['--scheduler=llm-combined-concurr-fuzz', '--llm-iset-feedback', '--llm-max-runs=8', '--interruptPoints', '--llmdir=/home/michael/Documents/software/fray2/fray/llm-stuff/', "--llm-num-traces-in-prompt=10", "--llm-runs-until-llm=200", "--llm-model=gpt-5"],
+    "llm-8-gpt5-no-fwd" : ['--scheduler=llm-combined-concurr-fuzz', '--llm-no-carry-forward', '--llm-iset-feedback', '--llm-max-runs=8', '--interruptPoints', '--llmdir=/home/michael/Documents/software/fray2/fray/llm-stuff/', "--llm-num-traces-in-prompt=10", "--llm-runs-until-llm=200", "--llm-model=gpt-5"],
     "llm-16" : ['--scheduler=llm-combined-concurr-fuzz', '--llm-iset-feedback', '--llm-max-runs=16', '--interruptPoints', '--llmdir=/home/michael/Documents/software/fray2/fray/llm-stuff/', "--llm-num-traces-in-prompt=10", "--llm-runs-until-llm=200"],
 }
 
