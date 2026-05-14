@@ -44,8 +44,10 @@ def build(application: str):
 @click.option("--cpu", type=int, default=6)
 @click.option("--perf-mode", type=bool, is_flag=True, show_default=True, default=False)
 @click.option("--iterations", type=int, default=20)
-def run(tool: str, application: str, scheduler: str, name: str, timeout: int, cpu: int, iterations: int, perf_mode: bool):
+@click.option("--extra-fray-arg", multiple=True, help="Additional argument to pass through to Fray. Repeat for multiple args.")
+def run(tool: str, application: str, scheduler: str, name: str, timeout: int, cpu: int, iterations: int, perf_mode: bool, extra_fray_arg: tuple[str, ...]):
     app = BENCHMARKS[application]
+    extra_fray_args = list(extra_fray_arg)
     for i in range(iterations):
         out_dir = os.path.join(OUTPUT_PATH, name, app.name, scheduler if tool == "fray" else tool, f"iter-{i}")
         # if os.path.exists(out_dir):
@@ -54,7 +56,7 @@ def run(tool: str, application: str, scheduler: str, name: str, timeout: int, cp
         with Pool(processes=cpu) as pool:
             if tool == "java":
                 pool.starmap(run_fray, map(lambda it: (*it, timeout),
-                            app.generate_java_test_commands(SCHEDULERS["random"], out_dir, timeout, perf_mode)))
+                            app.generate_java_test_commands(SCHEDULERS["random"] + extra_fray_args, out_dir, timeout, perf_mode)))
             elif tool == "rr":
                 pool.starmap(run_rr, map(lambda it: (*it, timeout),
                             app.generate_rr_test_commands(out_dir, timeout, perf_mode)))
@@ -66,7 +68,7 @@ def run(tool: str, application: str, scheduler: str, name: str, timeout: int, cp
                             app.generate_fray_stats_collector_commands(out_dir)))
             else:
                 pool.starmap(run_fray, map(lambda it: (
-                    *it, timeout), app.generate_fray_test_commands(SCHEDULERS[scheduler], out_dir, timeout, perf_mode)))
+                    *it, timeout), app.generate_fray_test_commands(SCHEDULERS[scheduler] + extra_fray_args, out_dir, timeout, perf_mode)))
 
 
 @main.command(name="runOne")
