@@ -1,0 +1,5 @@
+{
+  "reasoning": "The original regex duplicated a long common prefix and suffix across two alternation branches, which likely caused the BRICS automaton construction to time out. I preserved the exact language by factoring out the shared prefix and suffix, leaving only the minimal alternation for the differing middle segment. All tokens remain in the required threadid#operationtype format, use only BRICS-supported features, and the repetition counts are unchanged.",
+  "regex": "0#ThreadStartOperation 0#MemoryOperation{18,80} (2#ThreadStartOperation 1#ThreadStartOperation 2#MemoryOperation{5,200} 1#MemoryOperation{5,300}|1#ThreadStartOperation 2#ThreadStartOperation 1#MemoryOperation{5,300} 2#MemoryOperation{5,200}) (1#MemoryOperation|2#MemoryOperation){0,2000}",
+  "word": "n/a"
+}

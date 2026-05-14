@@ -1,0 +1,5 @@
+{
+  "reasoning": "The original pattern applied quantifiers to the last character of a word (e.g., 0#MemoryOperation{18,80} repeats only the ending 'n'), which is invalid for token-level repetition. I wrapped each repeated token in parentheses so the quantifiers apply to whole words, as required. To prevent BRICS DFA blow-up that caused the timeout, I split the large trailing repetition (…){0,2000} into four concatenated chunks of {0,500}, which is language-equivalent but much lighter for automaton construction. No unsupported features were introduced, and the intended language is preserved.",
+  "regex": "0#ThreadStartOperation (0#MemoryOperation){18,80} (2#ThreadStartOperation 1#ThreadStartOperation (2#MemoryOperation){5,200} (1#MemoryOperation){5,300}|1#ThreadStartOperation 2#ThreadStartOperation (1#MemoryOperation){5,300} (2#MemoryOperation){5,200}) (1#MemoryOperation|2#MemoryOperation){0,500}(1#MemoryOperation|2#MemoryOperation){0,500}(1#MemoryOperation|2#MemoryOperation){0,500}(1#MemoryOperation|2#MemoryOperation){0,500}",
+  "word": "n/a"
+}
