@@ -24,7 +24,9 @@ def run_fray(command: Dict[str, Any], log_path: str, cwd: str, timeout: int):
     error_found = False
     try:
         start_time = time.time()
-        proc = subprocess.run(command, cwd=cwd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        with open(os.path.join(log_path, "stdout.log"), "w") as stdout, \
+                open(os.path.join(log_path, "stderr.log"), "w") as stderr:
+            proc = subprocess.run(command, cwd=cwd, stdout=stdout, stderr=stderr)
         error_found = proc.returncode != 0 and proc.returncode != 124
     except subprocess.TimeoutExpired:
         pass
