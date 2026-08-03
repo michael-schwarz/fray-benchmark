@@ -18,6 +18,14 @@ dependencies {
 
 tasks.register<Copy>("copyDependencies") {
   from(configurations.testRuntimeClasspath)
+  from(configurations.testRuntimeClasspath.get().incoming.artifactView {
+    withVariantReselection()
+    isLenient = true
+    attributes {
+      attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.DOCUMENTATION))
+      attribute(DocsType.DOCS_TYPE_ATTRIBUTE, objects.named(DocsType.SOURCES))
+    }
+  }.files)
   into("${layout.buildDirectory.get().asFile}/dependency")
 }
 
